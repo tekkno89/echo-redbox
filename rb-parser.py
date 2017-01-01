@@ -39,7 +39,22 @@ def getBoxes(zipcode='78759'):
 
    return boxesDictionary
 
-def getBoxMovies(zipcode='78759'):
+def getBoxMovies(zipcode='78759', kiosk='0'):
    # This function is to select box and return list of all movies
 
+   moviesDictionary = {}
 
+   if kiosk == '0':
+      boxes = getBoxes(zipcode)
+
+      for boxKey, boxValue in boxes.items():
+         print('---', boxKey, '---')
+         print(boxValue['vendorName'])
+         print(boxValue['vendorStreet'])
+         print(boxValue['vendorCSZ'])
+         print('')
+
+      boxSelectPrompt = input('Select Number for Box Listed Above ')
+      print('You Selected Kiosk', boxes[int(boxSelectPrompt)]['kioskId'])
+   else:
+      pass
