@@ -1,20 +1,24 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import re, time
-
+import re, time, signal
 
 driver = webdriver.PhantomJS()
-
+driver.implicitly_wait(2)
 
 def getBoxes(zipcode='78759'):
    # This function is to get all boxes to store data
+   print("step 1")
    boxesDictionary = {}
+   print("step 2")
    getBoxQuery = 'http://www.redbox.com/locations?loc={}'.format(zipcode)
+   print("step 3")
    reBoxList = re.compile('kiosk')
+   print("step 4")
 
    driver.get(getBoxQuery)
-   time.sleep(1)
-   boxResults = BeautifulSoup(driver.page_source)
+   print("step 5")
+   boxResults = BeautifulSoup(driver.page_source, "html.parser")
+   print("step 6")
    boxListResults = boxResults.find_all('li', {'class' : reBoxList})
 
    for val, li in enumerate(boxListResults):
@@ -24,18 +28,18 @@ def getBoxes(zipcode='78759'):
       vendorLocation = li.find('div', { 'class' : 'storeresults-details'})
       vendorStreet = vendorLocation.contents[0].lstrip()
       vendorCSZ = vendorLocation.contents[1].contents[0].lstrip()
-      print(vendorName)
-      print(vendorStreet)
-      print(vendorCSZ)
-      print(kioskId)
-      print('')
+#      print(vendorName)
+#      print(vendorStreet)
+#      print(vendorCSZ)
+#      print(kioskId)
+#      print('')
 
       boxesDictionary[val] = {'kioskId':kioskId, 'vendorName':vendorName, 'vendorStreet':vendorStreet, 'vendorCSZ':vendorCSZ}
 
-   for key, val in boxesDictionary.items():
-      print(key,val)
+#   for key, val in boxesDictionary.items():
+#      print(key,val)
 
-   print(boxesDictionary[0]['vendorName'])
+#   print(boxesDictionary[0]['vendorName'])
 
    return boxesDictionary
 
@@ -60,6 +64,5 @@ def getBoxMovies(zipcode='78759', kioskId='0'):
    else:
       pass
 
-
-driver.close()
+driver.service.process.send_signal(signal.SIGTERM)
 driver.quit()
