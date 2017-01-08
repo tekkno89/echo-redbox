@@ -7,18 +7,12 @@ driver.implicitly_wait(2)
 
 def getBoxes(zipcode='78759'):
    # This function is to get all boxes to store data
-   print("step 1")
    boxesDictionary = {}
-   print("step 2")
    getBoxQuery = 'http://www.redbox.com/locations?loc={}'.format(zipcode)
-   print("step 3")
    reBoxList = re.compile('kiosk')
-   print("step 4")
 
    driver.get(getBoxQuery)
-   print("step 5")
    boxResults = BeautifulSoup(driver.page_source, "html.parser")
-   print("step 6")
    boxListResults = boxResults.find_all('li', {'class' : reBoxList})
 
    for val, li in enumerate(boxListResults):
