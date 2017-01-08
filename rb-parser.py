@@ -39,12 +39,12 @@ def getBoxes(zipcode='78759'):
 
    return boxesDictionary
 
-def getBoxMovies(zipcode='78759', kiosk='0'):
+def getBoxMovies(zipcode='78759', kioskId='0'):
    # This function is to select box and return list of all movies
 
    moviesDictionary = {}
 
-   if kiosk == '0':
+   if kioskId == '0':
       boxes = getBoxes(zipcode)
 
       for boxKey, boxValue in boxes.items():
@@ -54,7 +54,12 @@ def getBoxMovies(zipcode='78759', kiosk='0'):
          print(boxValue['vendorCSZ'])
          print('')
 
-      boxSelectPrompt = input('Select Number for Box Listed Above ')
-      print('You Selected Kiosk', boxes[int(boxSelectPrompt)]['kioskId'])
+      kioskSelect = input('Select Number for Box Listed Above ')
+      kioskId = boxes[int(kioskSelect)]['kioskId']
+      print('You Selected Kiosk', kioskId)
    else:
       pass
+
+
+driver.close()
+driver.quit()
