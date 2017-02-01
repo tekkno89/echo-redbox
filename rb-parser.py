@@ -1,8 +1,15 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import re, time, signal
 
-driver = webdriver.PhantomJS()
+dcap = dict(DesiredCapabilities.PHANTOMJS)
+dcap["phantomjs.page.settings.userAgent"] = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/41.0.2227.1 Safari/537.36"
+)
+
+driver = webdriver.PhantomJS(desired_capabilities=dcap)
 driver.implicitly_wait(2)
 
 def getBoxes(zipcode='78759'):
@@ -22,18 +29,7 @@ def getBoxes(zipcode='78759'):
       vendorLocation = li.find('div', { 'class' : 'storeresults-details'})
       vendorStreet = vendorLocation.contents[0].lstrip()
       vendorCSZ = vendorLocation.contents[1].contents[0].lstrip()
-#      print(vendorName)
-#      print(vendorStreet)
-#      print(vendorCSZ)
-#      print(kioskId)
-#      print('')
-
       boxesDictionary[val] = {'kioskId':kioskId, 'vendorName':vendorName, 'vendorStreet':vendorStreet, 'vendorCSZ':vendorCSZ}
-
-#   for key, val in boxesDictionary.items():
-#      print(key,val)
-
-#   print(boxesDictionary[0]['vendorName'])
 
    return boxesDictionary
 
@@ -55,8 +51,20 @@ def getBoxMovies(zipcode='78759', kioskId='0'):
       kioskSelect = input('Select Number for Box Listed Above ')
       kioskId = boxes[int(kioskSelect)]['kioskId']
       print('You Selected Kiosk', kioskId)
-   else:
-      pass
+
+   getBoxQuery = 'http://www.redbox.com/locations?loc={}'.format(zipcode)
+
+   driver.get(getBoxQuery)
+   driver.find_element_by_id(kioskId).click()
+   time.sleep(.5)
+   driver.find_element_by_partial_link_text('See More').click()
+   time.sleep(.5)
+   page = BeautifulSoup(driver.page_source, "html.parser")
+
+   find_newRelease = page.find('div', id="productlistrollupphysical3_ProductListOdopod_Widget")
+
+   for i in find_newRelease.find_all('a'):
+      print(i.text)
 
 driver.service.process.send_signal(signal.SIGTERM)
 driver.quit()
