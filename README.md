@@ -22,6 +22,13 @@ You will need to install phantomjs, this can be done on mac with:
 brew install phantomjs
 ```
 
+Use the following to install phantomjs on Ubuntu
+
+```sh
+apt-get install node nodejs-legacy npm
+npm -g install phantomjs
+```
+
 Running
 ===
 
